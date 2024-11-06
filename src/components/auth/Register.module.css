@@ -1,0 +1,20 @@
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #212121;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-bottom: 1rem;
+}

@@ -1,0 +1,20 @@
+/* src/components/FileManagement.module.css */
+.filesContainer {
+    margin-top: 2rem;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+button {
+    margin-left: 0.5rem;
+}
