@@ -9,15 +9,11 @@ import styles from './DashboardPage.module.css';
 
 function DashboardPage() {
     const navigate = useNavigate();
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        navigate('/login');
-    };
 
     const plans = [
-        { id: 1, name: "Free", price: 0, maxStorage: 500, maxSlots: 1, downloadSpeed: "500kbps", expiry: "3650 days" },
-        { id: 2, name: "Premium", price: 10, maxStorage: 2000, maxSlots: 5, downloadSpeed: "5Mbps", expiry: "30 days" },
-        { id: 3, name: "Pro", price: 25, maxStorage: 5000, maxSlots: 10, downloadSpeed: "Full Speed", expiry: "30 days" },
+        { id: 1, name: "Free", price: 0, maxStorage: 500, maxSlots: 1, downloadSpeed: "500kbps", maxFileSize: 100, expiry: "3650 days" },
+        { id: 2, name: "Premium", price: 10, maxStorage: 2000, maxSlots: 5, downloadSpeed: "5Mbps", maxFileSize: 1000, expiry: "30 days" },
+        { id: 3, name: "Pro", price: 25, maxStorage: 5000, maxSlots: 10, downloadSpeed: "Full Speed", maxFileSize: 5000, expiry: "30 days" },
     ];
 
     const [currentPlan, setCurrentPlan] = useState(plans[0]);
@@ -35,7 +31,10 @@ function DashboardPage() {
                 <h2>Welcome to Your Dashboard</h2>
                 <div>
                     <Link to="/profile-settings" className="btn btn-secondary me-2">Profile Settings</Link>
-                    <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+                    <button onClick={() => {
+                        localStorage.removeItem('authToken');
+                        navigate('/login');
+                    }} className="btn btn-danger">Logout</button>
                 </div>
             </div>
             <UserStats 
@@ -49,8 +48,8 @@ function DashboardPage() {
                 plans={plans} 
                 setCurrentPlan={setCurrentPlan} 
             />
-            <TorrentManagement files={files} setFiles={setFiles} />
-            <FileManagement files={files} setFiles={setFiles} />
+            <TorrentManagement files={files} setFiles={setFiles} currentPlan={currentPlan} />
+            <FileManagement files={files} setFiles={setFiles} currentPlan={currentPlan} />
         </div>
     );
 }

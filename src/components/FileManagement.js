@@ -1,52 +1,72 @@
-// src/components/FileManagement.js
-import React from 'react';
+import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 import styles from './FileManagement.module.css';
-import JSZip from 'jszip';
-
 
 function FileManagement({ files, setFiles }) {
-    const handleDownload = (fileId) => {
-        const file = files.find(f => f.id === fileId);
-        if (file) {
-            const blob = new Blob([`Downloaded content of ${file.name}`], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.name;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-    };
+    const [sortOrder, setSortOrder] = useState('name');
+    const [filterText, setFilterText] = useState('');
 
-    const handleZipDownload = async (fileId) => {
-        const file = files.find(f => f.id === fileId);
-        if (file) {
-            const zip = new JSZip();
-            zip.file(file.name, `Zipped content of ${file.name}`);
-            const blob = await zip.generateAsync({ type: 'blob' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${file.name}.zip`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-    };
+    const sortedFiles = [...files]
+        .filter(file => file.status === 'Completed') // Only show completed files
+        .sort((a, b) => {
+            if (sortOrder === 'name') return a.name.localeCompare(b.name);
+            if (sortOrder === 'size') return a.size - b.size;
+            if (sortOrder === 'date') return a.id - b.id;
+            return 0;
+        })
+        .filter((file) =>
+            file.name.toLowerCase().includes(filterText.toLowerCase())
+        );
 
     const handleDelete = (fileId) => {
-        setFiles(files.filter(file => file.id !== fileId));
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This file will be permanently deleted!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setFiles(files.filter((file) => file.id !== fileId));
+                Swal.fire('Deleted!', 'The file has been deleted.', 'success');
+            }
+        });
     };
 
     return (
         <div className={styles.filesContainer}>
             <h3>Your Files</h3>
-            <ul>
-                {files.map(file => (
-                    <li key={file.id}>
-                        <span>{file.name} ({file.size}MB)</span>
-                        <button onClick={() => handleDownload(file.id)} className="btn btn-link">Download</button>
-                        <button onClick={() => handleZipDownload(file.id)} className="btn btn-link">Zip & Download</button>
-                        <button onClick={() => handleDelete(file.id)} className="btn btn-danger">Delete</button>
+
+            {/* Filter and Sort Options */}
+            <div className="d-flex mb-3">
+                <input
+                    type="text"
+                    placeholder="Filter by name"
+                    value={filterText}
+                    onChange={(e) => setFilterText(e.target.value)}
+                    className="form-control me-2"
+                />
+                <select onChange={(e) => setSortOrder(e.target.value)} className="form-select">
+                    <option value="name">Sort by Name</option>
+                    <option value="size">Sort by Size</option>
+                    <option value="date">Sort by Date</option>
+                </select>
+            </div>
+
+            <ul className="list-group">
+                {sortedFiles.map(file => (
+                    <li key={file.id} className="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5>{file.name}</h5>
+                            <p>Size: {(file.size / 1024).toFixed(2)} MB</p>
+                            <p>Date Downloaded: {new Date(file.id).toLocaleString()}</p>
+                            <p>Status: {file.status}</p>
+                        </div>
+                        <div>
+                            <button onClick={() => handleDelete(file.id)} className="btn btn-danger">Delete</button>
+                        </div>
                     </li>
                 ))}
             </ul>
