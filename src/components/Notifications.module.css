@@ -1,0 +1,28 @@
+/* src/components/Notifications.module.css */
+.notificationsContainer {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 250px;
+    z-index: 1000;
+}
+
+.notification {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dismissButton {
+    background: transparent;
+    border: none;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 0.8em;
+}
