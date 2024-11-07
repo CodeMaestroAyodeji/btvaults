@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import Swal from "sweetalert2";
 import styles from "./TorrentManagement.module.css";
 
-function TorrentManagement({ files, setFiles, currentPlan }) {
+function TorrentManagement({ files, setFiles, currentPlan, onDownloadComplete }) {
     const [torrentFile, setTorrentFile] = useState(null);
     const [magnetLink, setMagnetLink] = useState("");
     const [isDownloading, setIsDownloading] = useState(false);
@@ -54,6 +54,12 @@ function TorrentManagement({ files, setFiles, currentPlan }) {
     
                     // Remove the file from pending downloads after it completes
                     setPendingDownloads((prev) => prev.filter((item) => item.id !== file.id));
+
+                    // Trigger download completion notification
+                    if (onDownloadComplete) {
+                        onDownloadComplete(file.name);
+                    }
+                    
                     return 100;
                 }
                 return prevProgress + downloadSpeed;
